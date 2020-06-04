@@ -47,15 +47,20 @@ export const phonesReducer = (state = defaultState, action) => {
       return produce(state, draft => {
         draft.filterData.status = status
       })
+
+    case C.phoneConst.SAVE_FILTER_DATA:
+      return produce(state, draft => {
+        draft.filterData[action.payload.name] = action.payload.data
+      })
     case C.phoneConst.STORE_CURRENT_PHONE:
       return produce(state, draft => {
         draft.currentPhone = action.payload
       })
     case C.phoneConst.STORE_PHONE_DATA:
-      const type = action.payload.type
+      const name = action.payload.name
       const data = action.payload.data
       return produce(state, draft => {
-        draft.currentPhone[type] = data
+        draft.currentPhone[name] = data
       })
     case C.phoneConst.FREE_BUSY_IN_STORE:
       return produce(state, draft => {

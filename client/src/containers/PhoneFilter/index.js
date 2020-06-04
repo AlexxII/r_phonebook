@@ -7,23 +7,39 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import { telecomOperators, phoneStatus, phonesRange } from '../../lib/selects'
 import { connect } from 'react-redux'
-import { saveOperatorFilter, saveStatusFilter, saveRangeFilter } from '../../store/phones/actions'
+import { saveFilterData } from '../../store/phones/actions'
 
-const PhoneFilter = ({ filterData, saveOperatorFilter, saveStatusFilter, saveRangeFilter }) => {
+const PhoneFilter = ({ filterData, saveFilterData }) => {
   const [phoneRange, setPhoneRange] = useState(phonesRange[0].range)
 
   const handleOperatorChange = (e) => {
-    saveOperatorFilter(e.target.value)
+    const name = e.target.name
+    const data = e.target.value
+    saveFilterData({
+      name, data
+    })
     setPhoneRange(phonesRange[e.target.value].range)
-    saveRangeFilter(0)
+    saveFilterData({
+      name: 'range',
+      data: 0
+    })
   }
 
   const handleStatusChange = (e) => {
-    saveStatusFilter(e.target.value)
+    console.log(e);
+    const name = e.target.name
+    const data = e.target.value
+    saveFilterData({
+      name, data
+    })
   }
 
   const handleRangeChange = (e) => {
-    saveRangeFilter(e.target.value)
+    const name = e.target.name
+    const data = e.target.value
+    saveFilterData({
+      name, data
+    })
   }
 
   return (
@@ -37,6 +53,7 @@ const PhoneFilter = ({ filterData, saveOperatorFilter, saveStatusFilter, saveRan
                 labelId="phone-operator-select-label"
                 onChange={handleOperatorChange}
                 value={filterData.operator}
+                name="operator"
               >
                 {telecomOperators.map((item, keyIndex) =>
                   <MenuItem key={keyIndex} value={keyIndex}>{item}</MenuItem>
@@ -51,6 +68,7 @@ const PhoneFilter = ({ filterData, saveOperatorFilter, saveStatusFilter, saveRan
                 labelId="phone-operator-select-label"
                 onChange={handleRangeChange}
                 value={filterData.range}
+                name="range"
               >
                 {phoneRange.map((item, keyIndex) =>
                   <MenuItem key={keyIndex} value={keyIndex}>{item.title}</MenuItem>
@@ -65,6 +83,7 @@ const PhoneFilter = ({ filterData, saveOperatorFilter, saveStatusFilter, saveRan
                 labelId="phone-operator-select-label"
                 onChange={handleStatusChange}
                 value={filterData.status}
+                name="status"
               >
                 <MenuItem key={0} value={0}>Номер не обработан</MenuItem>
                 {phoneStatus.map((item, keyIndex) =>
@@ -87,9 +106,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-  saveOperatorFilter,
-  saveStatusFilter,
-  saveRangeFilter
+  saveFilterData
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PhoneFilter)

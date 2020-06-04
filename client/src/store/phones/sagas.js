@@ -30,6 +30,14 @@ export default function* rootSage() {
   ])
 }
 
+/*
+67 ~50-51 %
+точно 45%
+скорее 22% 2/3 -врут
+задача - уйти за 50%, за 55% - крутяк
+прогноз ВЦИОМ за - 71%
+*/
+
 function* showDriveDialog(data) {
   try {
     // найти и сохранить в сторе случайный номер
@@ -130,12 +138,17 @@ async function searchPhoneOnServer(phone) {
 
 function* updatePhoneData(data) {
   try {
-    console.log(data.payload);
     const payload = data.payload
     yield call(updatePhoneNumber, payload)
     if (payload.search) {
       yield put({ type: C.phoneConst.RESTORE_FIND_NUMBER, payload })
     }
+    const noty = {
+      variant: 'success',
+      duration: 1500,
+      text: 'Обновления сохранены в БД'
+    }
+    yield put(showNoty(noty))
     yield put(setDialogState(false))
   } catch (e) {
     console.log(e);

@@ -49,23 +49,9 @@ export const searchPhoneNumber = (data) => {
   }
 }
 
-export const saveOperatorFilter = (data) => {
+export const saveFilterData = (data) => {
   return {
-    type: C.phoneConst.SAVE_OPERATOR_FILTER,
-    payload: data
-  }
-}
-
-export const saveRangeFilter = (data) => {
-  return {
-    type: C.phoneConst.SAVE_RANGE_FILTER,
-    payload: data
-  }
-}
-
-export const saveStatusFilter = (data) => {
-  return {
-    type: C.phoneConst.SAVE_STATUS_FILTER,
+    type: C.phoneConst.SAVE_FILTER_DATA,
     payload: data
   }
 }

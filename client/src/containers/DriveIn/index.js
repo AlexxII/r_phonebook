@@ -56,7 +56,7 @@ const DriveIn = ({ data, currentPhone, filterData, freeBusyNumber, updatePhone, 
     let name = e.target.name
     let value = e.target.value
     savePhoneData({
-      type: name,
+      name,
       data: value
     })
   }

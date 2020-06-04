@@ -38,9 +38,9 @@ app.use("/phones", cors(), (req, res) => {
 
 app.use("/phone", cors(), (req, res) => {
   const operator = req.query.operator
-  // const range = req.query.range
+  const range = req.query.range
   const status = req.query.status
-  pool.query("SELECT * FROM phones WHERE telecom=? AND status=? AND deleted=0 AND busy=0 ORDER BY RAND() LIMIT 1", [operator, status], function (err, data) {
+  pool.query("SELECT * FROM phones WHERE telecom=? AND range=? AND status=? AND deleted=0 AND busy=0 ORDER BY RAND() LIMIT 1", [operator, range, status], function (err, data) {
     if (err) return console.log(err);
     if (data.length) {
       const phoneData = data[0]
