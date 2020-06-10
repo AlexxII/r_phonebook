@@ -7,13 +7,14 @@ import FormControl from '@material-ui/core/FormControl';
 import SearchIcon from '@material-ui/icons/Search';
 import IconButton from '@material-ui/core/IconButton';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Backdrop from '@material-ui/core/Backdrop';
+import { makeStyles } from '@material-ui/core/styles';
 
 import Badge from '@material-ui/core/Badge';
 
-
-
 import { connect } from 'react-redux'
-import { searchPhoneNumber, showDriveDialog } from '../../store/phones/actions'
+import { searchPhoneNumber, showDriveDialog, loadingData } from '../../store/phones/actions'
 
 function TextMaskCustom(props) {
   const { inputRef, ...other } = props;
@@ -31,17 +32,26 @@ function TextMaskCustom(props) {
   );
 }
 
-const PhoneSearch = ({ searchPhoneNumber, findPhone, showDriveDialog }) => {
+const useStyles = makeStyles((theme) => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
+}));
+
+const PhoneSearch = ({ searchPhoneNumber, findPhone, showDriveDialog, loadingData, loading }) => {
+  const classes = useStyles();
+
   const [values, setValues] = React.useState({
     textmask: '8(  )   -  -  '
   });
-
   const [error, setError] = React.useState(false)
   const phoneRegex = /^8\(\d{3}\)\d{3}-\d{2}-\d{2}$/
 
   const handlePhoneSearch = () => {
     const value = values.textmask
     if (value.match(phoneRegex)) {
+      loadingData(true)
       searchPhoneNumber(value)
       setError(false)
     } else {
@@ -66,6 +76,10 @@ const PhoneSearch = ({ searchPhoneNumber, findPhone, showDriveDialog }) => {
 
   return (
     <Fragment>
+      <Backdrop className={classes.backdrop} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <Grid container spacing={0} className="phone-search">
         <Grid item xs={8} sm={3} md={2}>
           <FormControl fullWidth>
@@ -103,12 +117,14 @@ const PhoneSearch = ({ searchPhoneNumber, findPhone, showDriveDialog }) => {
 
 const mapStateToProps = state => {
   return {
+    loading: state.phones.loading,
     findPhone: state.phones.findPhone
   }
 }
 const mapDispatchToProps = {
   searchPhoneNumber,
-  showDriveDialog
+  showDriveDialog,
+  loadingData
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PhoneSearch)

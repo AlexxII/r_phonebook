@@ -17,3 +17,7 @@ export const updateFatchedPhoneData = (data) => {
 export const updateFindPhone = (data) => {
   return data[0]
 }
+
+export const updateResults = (data) => {
+  return data.phones
+}

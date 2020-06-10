@@ -1,7 +1,7 @@
 import 'regenerator-runtime/runtime'
 import { takeEvery, takeLatest, put, call, all, select } from 'redux-saga/effects'
-import { updatePhonesData, updateFindPhone, updateFetchedPhoneData } from '../../lib/phonesUpdate'
-import { showNoty, setDialogState } from '../../store/phones/actions'
+import { updatePhonesData, updateFindPhone, updateFetchedPhoneData, updateResults } from '../../lib/phonesUpdate'
+import { showNoty, setDialogState, loadingData } from '../../store/phones/actions'
 import C from '../types';
 
 export function* watchDialogFetch() {
@@ -20,13 +20,18 @@ export function* watchPhoneUpdate() {
   yield takeEvery(C.phoneConst.UPDATE_PHONE_DATA, updatePhoneData)
 }
 
+export function* watchResultsRequest() {
+  yield takeEvery(C.phoneConst.REQUEST_RESULTS_DATA, requestResults)
+}
+
 export default function* rootSage() {
   yield all([
     // Внимание с ()!!!!
     watchDialogFetch(),
     watchFreeBusyNumber(),
     watchPhoneSearch(),
-    watchPhoneUpdate()
+    watchPhoneUpdate(),
+    watchResultsRequest()
   ])
 }
 
@@ -43,17 +48,27 @@ function* showDriveDialog(data) {
     // найти и сохранить в сторе случайный номер
     if (!data.payload.id) {
       const fetchedPhoneData = yield call(fetchPhoneData, data.payload)
-      const phone = updateFetchedPhoneData(fetchedPhoneData)
-      if (!phone.error) {
-        yield put({ type: C.phoneConst.STORE_CURRENT_PHONE, payload: phone })
+      const resp = updateFetchedPhoneData(fetchedPhoneData)
+      if (!resp.error) {
+        yield put({ type: C.phoneConst.STORE_CURRENT_PHONE, payload: resp })
         yield put(setDialogState(true))
       } else {
-        const noty = {
-          variant: 'error',
-          duration: 1500,
-          text: 'Телефонов, согласно запроса не найдено'
+        if (!resp.serverError) {
+          const noty = {
+            variant: 'error',
+            duration: 1500,
+            text: 'Телефонов, согласно запроса не найдено'
+          }
+          yield put(showNoty(noty))
+        } else {
+          const noty = {
+            variant: 'error',
+            duration: 1500,
+            text: 'Ошибка сервера. Смотрите лог.'
+          }
+          yield put(showNoty(noty))
+          console.log(resp.message)
         }
-        yield put(showNoty(noty))
       }
     } else {
       // сохранить в стор найденный ранее номер
@@ -62,10 +77,16 @@ function* showDriveDialog(data) {
       yield put(setDialogState(true))
     }
   } catch (e) {
+    const noty = {
+      variant: 'error',
+      duration: 1500,
+      text: 'Ошибка сервера. Смотрите лог.'
+    }
+    yield put(showNoty(noty))
     console.log(e);
   }
+  yield put(loadingData(false))
 }
-
 async function fetchPhoneData(data) {
   let config = {
     method: 'GET',
@@ -123,8 +144,15 @@ function* searchPhone(data) {
       yield put(showNoty(noty))
     }
   } catch (e) {
+    const noty = {
+      variant: 'error',
+      duration: 1500,
+      text: 'Ошибка сервера. Смотрите лог.'
+    }
+    yield put(showNoty(noty))
     console.log(e);
   }
+  yield put(loadingData(false))
 }
 async function searchPhoneOnServer(phone) {
   let config = {
@@ -162,6 +190,23 @@ async function updatePhoneNumber(data) {
   const url = 'http://localhost:3000/update?id=' + data.id + '&status=' +
     data.status + '&sex=' + data.sex + '&age=' + data.age + '&town=' + data.town + '&comment=' + data.comment
   const response = await fetch(url, config)
+  return await response.json()
+}
+
+function* requestResults() {
+  try {
+    const fetchedResults = yield call(fetchResults)
+    const phones = updateResults(fetchedResults)
+    yield put({ type: C.phoneConst.STORE_RESULTS, payload: phones })
+  } catch (e) {
+    console.log(e);
+  }
+}
+async function fetchResults() {
+  let config = {
+    headers: { mode: 'no-cors' }
+  };
+  const response = await fetch('http://localhost:3000/phones', config)
   return await response.json()
 }
 

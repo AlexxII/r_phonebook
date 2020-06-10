@@ -1,23 +1,12 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import { useSnackbar } from 'notistack';
 
-import { PhoneDialog } from '../../components'
+import { PhoneDialog, SettingsDialog } from '../../components'
 import { connect } from 'react-redux'
-import { requestPhone, freeBusyNumber, updatePhone, setDialogState, showDriveDialog, savePhoneData, showNoty } from '../../store/phones/actions'
+import { requestPhone, freeBusyNumber, updatePhone, setDialogState, showDriveDialog, savePhoneData, showNoty, loadingData } from '../../store/phones/actions'
 
-const DriveIn = ({ data, currentPhone, filterData, freeBusyNumber, updatePhone, setDialogState, phoneDialog, showDriveDialog, savePhoneData, showNoty, noty }) => {
-  const { enqueueSnackbar } = useSnackbar();
-
-  useEffect(() => {
-    if (!noty.firstInit) {
-      enqueueSnackbar(noty.text, {
-        variant: noty.variant,
-        autoHideDuration: noty.duration,
-      })
-    }
-  }, [noty])
+const DriveIn = ({ data, currentPhone, filterData, freeBusyNumber, updatePhone, setDialogState, phoneDialog, settingsDialog, loadingData, showDriveDialog, savePhoneData, showNoty }) => {
 
   const handleClickOpen = () => {
     const data = {
@@ -26,6 +15,7 @@ const DriveIn = ({ data, currentPhone, filterData, freeBusyNumber, updatePhone, 
       range: filterData.range,
       status: filterData.status
     }
+    loadingData(true)
     showDriveDialog(data)
   };
 
@@ -61,19 +51,27 @@ const DriveIn = ({ data, currentPhone, filterData, freeBusyNumber, updatePhone, 
     })
   }
 
+  const sInputHndl = (e) => {
+
+  }
+
+  const sCloseHndl = (e) => {
+
+  }
+
+  const sSaveHndl = (e) => {
+
+  }
+
   return (
     <Fragment>
       <Grid container spacing={0} className="phone-dialog-button">
-        <Grid item xs={11} sm={11}>
-          <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-            Начать опрос
+        <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+          Начать опрос
           </Button>
-          <PhoneDialog open={phoneDialog.open} phone={currentPhone} inputHndl={inputHndl} closeHdl={handleClose} saveHndl={handleSave} />
-        </Grid>
-        <Button variant="outlined" color="primary" onClick={e => console.log(e)}>
-          Выгрузить
-        </Button>
+        <PhoneDialog open={phoneDialog.open} phone={currentPhone} inputHndl={inputHndl} closeHdl={handleClose} saveHndl={handleSave} />
       </Grid>
+      <SettingsDialog open={settingsDialog.open} inputHndl={sInputHndl} closeHdl={sCloseHndl} saveHndl={sSaveHndl} />
     </Fragment>
   )
 }
@@ -84,11 +82,12 @@ const mapStateToProps = state => {
     currentPhone: state.phones.currentPhone,
     filterData: state.phones.filterData,
     phoneDialog: state.phones.phoneDialog,
-    noty: state.phones.noty
+    settingsDialog: state.phones.settingsDialog
   }
 }
 const mapDispatchToProps = {
   requestPhone,
+  loadingData,
   freeBusyNumber,
   updatePhone,
   setDialogState,

@@ -4,6 +4,7 @@ import produce from 'immer'
 const defaultState = {
   phones: [],
   currentPhone: {},
+  results: [],
   filterData: {
     operator: 0,
     range: 0,
@@ -16,22 +17,20 @@ const defaultState = {
   phoneDialog: {
     open: false
   },
+  settingsDialog: {
+    open: false
+  },
   noty: {
     firstInit: true,
     variant: 'info',
     duration: 1500,
     text: ''
-  }
+  },
+  loading: false
 }
 
 export const phonesReducer = (state = defaultState, action) => {
   switch (action.type) {
-    // case C.phoneConst.STORE_PHONES_DATA:
-    //   state = {
-    //     ...state,
-    //     phones: action.payload
-    //   }
-    //   return state
     case C.phoneConst.SAVE_OPERATOR_FILTER:
       const operator = action.payload
       return produce(state, draft => {
@@ -83,9 +82,21 @@ export const phonesReducer = (state = defaultState, action) => {
       return produce(state, draft => {
         draft.noty = action.payload
       })
+    case C.phoneConst.STORE_LOADING_STATE:
+      return produce(state, draft => {
+        draft.loading = action.payload
+      })
     case C.phoneConst.STORE_DIALOG_STATE:
       return produce(state, draft => {
         draft.phoneDialog.open = action.payload
+      })
+    case C.phoneConst.SHOW_SETTINGS_DIALOG:
+      return produce(state, draft => {
+        draft.settingsDialog.open = action.payload
+      })
+    case C.phoneConst.STORE_RESULTS:
+      return produce(state, draft => {
+        draft.results = action.payload
       })
     case C.phoneConst.UPDATE_PHONE:
       return {

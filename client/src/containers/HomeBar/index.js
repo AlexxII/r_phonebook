@@ -1,11 +1,12 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom'
+
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import PhoneIcon from '@material-ui/icons/Phone';
-// import AccountCircle from '@material-ui/icons/AccountCircle';
 import SettingsIcon from '@material-ui/icons/Settings';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
@@ -20,10 +21,13 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  link: {
+    textDecoration: "none",
+    color: 'black'
+  }
 }));
 
-const MyBar = () => {
-  const [auth, setAuth] = React.useState(true);
+const HomeBar = ({ menuHndl }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const classes = useStyles();
@@ -35,6 +39,11 @@ const MyBar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleSettings = (e) => {
+    menuHndl(e)
+    setAnchorEl(null);
+  }
 
   return (
     <div className={classes.root}>
@@ -71,14 +80,20 @@ const MyBar = () => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Генератор телефонов</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
+              <NavLink to="/results" className={classes.link}>
+                <MenuItem onClick={handleClose} >
+                  Результаты
+                </MenuItem>
+              </NavLink>
+              <MenuItem onClick={handleSettings} >
+                Настройки
+              </MenuItem>
             </Menu>
           </div>
         </Toolbar>
       </AppBar>
-    </div>
+    </div >
   );
 }
 
-export default MyBar
+export default HomeBar

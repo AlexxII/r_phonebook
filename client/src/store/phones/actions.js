@@ -7,6 +7,13 @@ export const showNoty = (data) => {
   }
 }
 
+export const loadingData = (data) => {
+  return {
+    type: C.phoneConst.STORE_LOADING_STATE,
+    payload: data
+  }
+}
+
 export const setDialogState = (data) => {
   return {
     type: C.phoneConst.STORE_DIALOG_STATE,
@@ -17,6 +24,13 @@ export const setDialogState = (data) => {
 export const showDriveDialog = (data) => {
   return {
     type: C.phoneConst.SHOW_DRIVE_DIALOG,
+    payload: data
+  }
+}
+
+export const showSettingsDialog = (data) => {
+  return {
+    type: C.phoneConst.SHOW_SETTINGS_DIALOG,
     payload: data
   }
 }
@@ -60,5 +74,13 @@ export const updatePhone = (data) => {
   return {
     type: C.phoneConst.UPDATE_PHONE_DATA,
     payload: data
+  }
+}
+
+// table
+
+export const requestResults = (data) => {
+  return {
+    type: C.phoneConst.REQUEST_RESULTS_DATA
   }
 }

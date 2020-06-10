@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react'
-import { MyBar, PhoneFilter, DriveIn } from '../../containers'
+import { MainWrap } from '../../containers'
+
 import createSagaMiddleware from 'redux-saga'
 import rootSaga from '../../store/phones/sagas'
 import { createStore, compose, applyMiddleware } from 'redux'
 import rootReducer from '../../store/reducers'
 import { Provider } from 'react-redux'
-import { PhoneSearch } from '../../components'
+import { SnackbarProvider } from 'notistack';
 
 const saga = createSagaMiddleware()
 
@@ -15,15 +16,13 @@ const store = createStore(rootReducer, composeEnhancers(
 ))
 saga.run(rootSaga)
 
-const App = () => {
+
+function App() {
   return (
     <Provider store={store}>
-      <Fragment>
-        <MyBar />
-        <PhoneSearch />
-        <PhoneFilter />
-        <DriveIn />
-      </Fragment>
+      <SnackbarProvider hideIconVariant={true}>
+        <MainWrap />
+      </SnackbarProvider>
     </Provider>
   )
 }

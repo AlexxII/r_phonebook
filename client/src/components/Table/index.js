@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -16,10 +16,6 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import InputMask from 'react-input-mask'
-
-import { connect } from 'react-redux'
-import { requestPhoneBook, updatePhone, addNewPhone, deletePhone } from '../../store/phones/actions'
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -68,8 +64,14 @@ const localData = {
   }
 }
 
-const Table = ({ data, updatePhone, addNewPhone, deletePhone, requestPhoneBook }) => {
-  const [state, setState] = React.useState({
+const Table = ({ data }) => {
+
+  useEffect(() => {
+    console.log(data);
+    
+  }, [data])
+
+  const [state, setState] = useState({
     columns: [
       {
         title: 'Телефон',
@@ -132,32 +134,8 @@ const Table = ({ data, updatePhone, addNewPhone, deletePhone, requestPhoneBook }
       localization={localData}
       columns={state.columns}
       data={data}
-      editable={{
-        onRowAdd: (newData) =>
-          new Promise((resolve) => {
-            addNewPhone(newData)
-            resolve();
-          }),
-        onRowUpdate: (newData, oldData) =>
-          new Promise((resolve) => {
-            updatePhone(newData)
-            resolve()
-          }),
-        onRowDelete: (oldData) =>
-          new Promise((resolve) => {
-            deletePhone(oldData)
-            resolve()
-          }),
-      }}
     />
   );
 }
 
-const mapDispatchToProps = {
-  requestPhoneBook,
-  updatePhone,
-  addNewPhone,
-  deletePhone
-}
-
-export default connect(null, mapDispatchToProps)(Table);
+export default Table
