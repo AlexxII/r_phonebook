@@ -5,6 +5,13 @@ const defaultState = {
   phones: [],
   currentPhone: {},
   results: [],
+  pollCodes: [],
+  currentPoll: false,
+  newPoll: {
+    title: false,
+    code: false,
+    comment: false
+  },
   filterData: {
     operator: 0,
     range: 0,
@@ -94,9 +101,32 @@ export const phonesReducer = (state = defaultState, action) => {
       return produce(state, draft => {
         draft.settingsDialog.open = action.payload
       })
+    // МУТАБЕЛЬНЫЙ КОД
     case C.phoneConst.STORE_RESULTS:
+      state = {
+        ...state,
+        results: action.payload
+      }
+      return state
+    case C.phoneConst.STORE_POLL_CODES:
       return produce(state, draft => {
-        draft.results = action.payload
+        draft.pollCodes = action.payload
+      })
+    case C.phoneConst.STORE_POLL_SELECT:
+      return produce(state, draft => {
+        draft.currentPoll = action.payload
+      })
+    case C.phoneConst.STORE_NEW_POLL_DATA:
+      return produce(state, draft => {
+        draft.newPoll[action.payload.name] = action.payload.data
+      })
+    case C.phoneConst.DROP_NEW_POLL_DATA:
+      return produce(state, draft => {
+        draft.newPoll = {
+          title: false,
+          code: false,
+          comment: false
+        }
       })
     case C.phoneConst.UPDATE_PHONE:
       return {

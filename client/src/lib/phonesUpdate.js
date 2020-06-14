@@ -21,3 +21,7 @@ export const updateFindPhone = (data) => {
 export const updateResults = (data) => {
   return data.phones
 }
+
+export const updateCodes = (data) => {
+  return data
+}

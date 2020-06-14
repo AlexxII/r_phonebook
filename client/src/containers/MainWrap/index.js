@@ -1,13 +1,18 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { SnackbarProvider, useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 import { Home, Results } from '../../pages'
-// import {showNoty} from '../../store/phones/actions'
+import { requestPollCodes } from '../../store/phones/actions'
 
-const MainWrap = ({ noty }) => {
+const MainWrap = ({ noty, requestPollCodes }) => {
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    // запрос кодов опросов
+    requestPollCodes()
+  }, [])
 
   useEffect(() => {
     if (!noty.firstInit) {
@@ -26,7 +31,6 @@ const MainWrap = ({ noty }) => {
       </Switch>
     </BrowserRouter>
   )
-
 }
 
 const mapStateToProps = state => {
@@ -36,4 +40,8 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps, null)(MainWrap)
+const mapDispatchToProps = {
+  requestPollCodes
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainWrap)

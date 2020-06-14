@@ -1,8 +1,16 @@
 import 'regenerator-runtime/runtime'
 import { takeEvery, takeLatest, put, call, all, select } from 'redux-saga/effects'
-import { updatePhonesData, updateFindPhone, updateFetchedPhoneData, updateResults } from '../../lib/phonesUpdate'
-import { showNoty, setDialogState, loadingData } from '../../store/phones/actions'
+import { updatePhonesData, updateFindPhone, updateFetchedPhoneData, updateResults, updateCodes } from '../../lib/phonesUpdate'
+import { showNoty, setDialogState, loadingData, dropNewPollData, requestPollCodes } from '../../store/phones/actions'
 import C from '../types';
+
+export function* watchPollCodesFetch() {
+  yield takeEvery(C.phoneConst.REQUEST_POLL_CODES, requestPollCodesEx)
+}
+
+export function* watchNewPollSave() {
+  yield takeEvery(C.phoneConst.SAVE_NEW_POLL, saveNewPoll)
+}
 
 export function* watchDialogFetch() {
   yield takeEvery(C.phoneConst.SHOW_DRIVE_DIALOG, showDriveDialog)
@@ -31,7 +39,9 @@ export default function* rootSage() {
     watchFreeBusyNumber(),
     watchPhoneSearch(),
     watchPhoneUpdate(),
-    watchResultsRequest()
+    watchResultsRequest(),
+    watchPollCodesFetch(),
+    watchNewPollSave()
   ])
 }
 
@@ -138,7 +148,7 @@ function* searchPhone(data) {
       yield put({ type: C.phoneConst.PHONE_FIND_FAILED })
       const noty = {
         variant: 'error',
-        duration: 1500,
+        duration: 2000,
         text: 'Телефон не найден в БД'
       }
       yield put(showNoty(noty))
@@ -146,7 +156,7 @@ function* searchPhone(data) {
   } catch (e) {
     const noty = {
       variant: 'error',
-      duration: 1500,
+      duration: 2500,
       text: 'Ошибка сервера. Смотрите лог.'
     }
     yield put(showNoty(noty))
@@ -192,13 +202,19 @@ async function updatePhoneNumber(data) {
   const response = await fetch(url, config)
   return await response.json()
 }
-
+// получение пула адресов для Results
 function* requestResults() {
   try {
     const fetchedResults = yield call(fetchResults)
     const phones = updateResults(fetchedResults)
     yield put({ type: C.phoneConst.STORE_RESULTS, payload: phones })
   } catch (e) {
+    const noty = {
+      variant: 'error',
+      duration: 2500,
+      text: 'Ошибка сервера. Смотрите лог.'
+    }
+    yield put(showNoty(noty))
     console.log(e);
   }
 }
@@ -207,6 +223,29 @@ async function fetchResults() {
     headers: { mode: 'no-cors' }
   };
   const response = await fetch('http://localhost:3000/phones', config)
+  return await response.json()
+}
+// получение кодов опросов на Home
+function* requestPollCodesEx() {
+  try {
+    const fetchedCodes = yield call(fetchCodes)
+    const phones = updateCodes(fetchedCodes)
+    yield put({ type: C.phoneConst.STORE_POLL_CODES, payload: phones })
+  } catch (e) {
+    const noty = {
+      variant: 'error',
+      duration: 2500,
+      text: 'Ошибка сервера. Начать опрос не получится. Смотрите лог.'
+    }
+    yield put(showNoty(noty))
+    console.log(e);
+  }
+}
+async function fetchCodes() {
+  let config = {
+    headers: { mode: 'no-cors' }
+  };
+  const response = await fetch('http://localhost:3000/poll-codes', config)
   return await response.json()
 }
 
@@ -225,5 +264,38 @@ async function fetchPhonesData() {
     headers: { mode: 'no-cors' }
   };
   const response = await fetch('http://localhost:3000/phones', config)
+  return await response.json()
+}
+
+// сохранить новый опрос
+function* saveNewPoll() {
+  try {
+    const state = yield select();
+    yield call(sendNewPoll, state.phones.newPoll)
+    const noty = {
+      variant: 'success',
+      duration: 2500,
+      text: 'Код нового опроса добавлен.'
+    }
+    yield put(showNoty(noty))
+    yield put(requestPollCodes())
+    yield put(dropNewPollData())
+  } catch (e) {
+    const noty = {
+      variant: 'error',
+      duration: 2500,
+      text: 'Ошибка сервера. Смотрите лог.'
+    }
+    yield put(showNoty(noty))
+    yield put(dropNewPollData())
+    console.log(e);
+  }
+}
+async function sendNewPoll(data) {
+  let config = {
+    headers: { mode: 'no-cors' }
+  };
+  const sql = 'http://localhost:3000/save-new-poll?title=' + data.title + '&code=' + data.code + '&comment=' + data.comment
+  const response = await fetch(sql, config)
   return await response.json()
 }

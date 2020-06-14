@@ -4,6 +4,7 @@ import MaskedInput from 'react-text-mask';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import SearchIcon from '@material-ui/icons/Search';
 import IconButton from '@material-ui/core/IconButton';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
@@ -92,6 +93,7 @@ const PhoneSearch = ({ searchPhoneNumber, findPhone, showDriveDialog, loadingDat
               id="formatted-text-mask-input"
               inputComponent={TextMaskCustom}
             />
+            <FormHelperText>Не учитывает код опроса при поиске</FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={2} sm={1} md={1}>

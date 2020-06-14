@@ -82,11 +82,11 @@ const HomeBar = ({ menuHndl }) => {
             >
               <NavLink to="/results" className={classes.link}>
                 <MenuItem onClick={handleClose} >
-                  Результаты
+                  Таблица телефонов
                 </MenuItem>
               </NavLink>
               <MenuItem onClick={handleSettings} >
-                Настройки
+                Добавить опрос
               </MenuItem>
             </Menu>
           </div>

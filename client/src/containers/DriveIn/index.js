@@ -1,23 +1,12 @@
 import React, { Fragment } from 'react';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 
 import { PhoneDialog, SettingsDialog } from '../../components'
 import { connect } from 'react-redux'
-import { requestPhone, freeBusyNumber, updatePhone, setDialogState, showDriveDialog, savePhoneData, showNoty, loadingData } from '../../store/phones/actions'
+import { requestPhone, freeBusyNumber, updatePhone, setDialogState, showSettingsDialog, savePhoneData, 
+  storeNewPoll, dropNewPollData, showNoty, saveNewPoll } from '../../store/phones/actions'
 
-const DriveIn = ({ data, currentPhone, filterData, freeBusyNumber, updatePhone, setDialogState, phoneDialog, settingsDialog, loadingData, showDriveDialog, savePhoneData, showNoty }) => {
-
-  const handleClickOpen = () => {
-    const data = {
-      id: null,
-      operator: filterData.operator,
-      range: filterData.range,
-      status: filterData.status
-    }
-    loadingData(true)
-    showDriveDialog(data)
-  };
+const DriveIn = ({ data, currentPhone, freeBusyNumber, updatePhone, newPoll, dropNewPollData,
+  setDialogState, phoneDialog, settingsDialog, savePhoneData, showSettingsDialog, storeNewPoll, saveNewPoll, showNoty }) => {
 
   const handleClose = () => {
     if (currentPhone.id && !currentPhone.search) {
@@ -52,26 +41,28 @@ const DriveIn = ({ data, currentPhone, filterData, freeBusyNumber, updatePhone, 
   }
 
   const sInputHndl = (e) => {
-
+    let name = e.target.name
+    let value = e.target.value
+    storeNewPoll({
+      name,
+      data: value
+    })
   }
 
   const sCloseHndl = (e) => {
-
+    dropNewPollData()
+    showSettingsDialog(false)
   }
 
   const sSaveHndl = (e) => {
-
+    saveNewPoll()
+    showSettingsDialog(false)
   }
 
   return (
     <Fragment>
-      <Grid container spacing={0} className="phone-dialog-button">
-        <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-          Начать опрос
-          </Button>
-        <PhoneDialog open={phoneDialog.open} phone={currentPhone} inputHndl={inputHndl} closeHdl={handleClose} saveHndl={handleSave} />
-      </Grid>
-      <SettingsDialog open={settingsDialog.open} inputHndl={sInputHndl} closeHdl={sCloseHndl} saveHndl={sSaveHndl} />
+      <PhoneDialog open={phoneDialog.open} phone={currentPhone} inputHndl={inputHndl} closeHdl={handleClose} saveHndl={handleSave} />
+      <SettingsDialog open={settingsDialog.open} poll={newPoll} inputHndl={sInputHndl} closeHdl={sCloseHndl} saveHndl={sSaveHndl} />
     </Fragment>
   )
 }
@@ -80,19 +71,21 @@ const mapStateToProps = state => {
   return {
     data: state.phones,
     currentPhone: state.phones.currentPhone,
-    filterData: state.phones.filterData,
     phoneDialog: state.phones.phoneDialog,
-    settingsDialog: state.phones.settingsDialog
+    settingsDialog: state.phones.settingsDialog,
+    newPoll: state.phones.newPoll
   }
 }
 const mapDispatchToProps = {
   requestPhone,
-  loadingData,
   freeBusyNumber,
   updatePhone,
   setDialogState,
-  showDriveDialog,
+  showSettingsDialog,
+  dropNewPollData,
   savePhoneData,
+  storeNewPoll,
+  saveNewPoll,
   showNoty
 }
 

@@ -40,8 +40,17 @@ app.use("/phone", cors(), (req, res) => {
   const operator = req.query.operator
   const range = req.query.range
   const status = req.query.status
-  pool.query("SELECT * FROM phones WHERE telecom=? AND range=? AND status=? AND deleted=0 AND busy=0 ORDER BY RAND() LIMIT 1", [operator, range, status], function (err, data) {
-    if (err) return console.log(err);
+
+  pool.query("SELECT * FROM phones WHERE telecom=? AND status=? AND band= ? AND deleted=0 AND busy=0 ORDER BY RAND() LIMIT 1", [operator, status, range], function (err, data) {
+    if (err) {
+      const errorAnswer = {
+        error: true,
+        serverError: true,
+        message: err
+      }
+      res.send(errorAnswer)
+      return console.log(err);
+    }
     if (data.length) {
       const phoneData = data[0]
       const id = phoneData.id
@@ -53,6 +62,7 @@ app.use("/phone", cors(), (req, res) => {
     } else {
       res.send({
         error: true,
+        serverError: false,
         message: 'Not Fount'
       })
     }
@@ -74,6 +84,27 @@ app.use("/phone-search", cors(), (req, res) => {
     if (err) return console.log(err);
     res.send(data)
   });
+})
+
+app.use("/poll-codes", cors(), (req, res) => {
+  pool.query("SELECT * FROM polls", function (err, data) {
+    if (err) return console.log(err);
+    res.send(data)
+  });
+})
+
+app.use("/save-new-poll", cors(), (req, res) => {
+  const title = req.query.title
+  const code = req.query.code
+  const comment = req.query.comment
+  
+  const sql = "INSERT INTO polls(title, code, comment) VALUES ('" + title + "', '" + code + "', '" + comment + "')"
+  
+  pool.query(sql, function(err, data) {
+    if (err) return console.log(err);
+    res.send(data)
+  })
+
 })
 
 app.use("/update", cors(), (req, res) => {
@@ -120,7 +151,7 @@ app.use("/add-phone", cors(), (req, res) => {
     status = 0
   }
   const id = Math.round(Math.random() * 10000000)
-  let data = [
+    let data = [
     {
       id,
       phone: phone,

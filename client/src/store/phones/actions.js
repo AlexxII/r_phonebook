@@ -77,10 +77,41 @@ export const updatePhone = (data) => {
   }
 }
 
-// table
+// drive
+export const requestPollCodes = () => {
+  return {
+    type: C.phoneConst.REQUEST_POLL_CODES
+  }
+}
+export const storePollSelect = (data) => {
+  return {
+    type: C.phoneConst.STORE_POLL_SELECT,
+    payload: data
+  }
+}
 
+// table
 export const requestResults = (data) => {
   return {
     type: C.phoneConst.REQUEST_RESULTS_DATA
+  }
+}
+
+// settings
+export const storeNewPoll = (data) => {
+  return {
+    type: C.phoneConst.STORE_NEW_POLL_DATA,
+    payload: data
+
+  }
+}
+export const dropNewPollData = () => {
+  return {
+    type: C.phoneConst.DROP_NEW_POLL_DATA
+  }
+}
+export const saveNewPoll = () => {
+  return {
+    type: C.phoneConst.SAVE_NEW_POLL
   }
 }

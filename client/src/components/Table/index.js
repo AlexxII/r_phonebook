@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { PollSelect } from '../../containers';
 
 
 const tableIcons = {
@@ -65,12 +66,6 @@ const localData = {
 }
 
 const Table = ({ data }) => {
-
-  useEffect(() => {
-    console.log(data);
-    
-  }, [data])
-
   const [state, setState] = useState({
     columns: [
       {
@@ -82,15 +77,23 @@ const Table = ({ data }) => {
         title: 'Статус',
         field: 'status',
         lookup: {
-          0: 'Добавлен и не обработан',
-          1: 'Номер не существует',
-          2: 'Телефон не доступен',
-          3: 'Телефон принадлежит организации',
-          4: 'Телефон несовершеннолетнего',
-          5: 'Телефон занят',
-          6: 'Попросил перезвонить позднее',
-          7: 'Респондент отказался отвечать',
-          8: 'Респондент согласился отвечать'
+          '0': 'Номер не обработан',
+          '1': 'Номер не существует',
+          '2': 'Неправильный набор номера',
+          '3': 'Данный вид связи недоступен',
+          '4': 'Данный номер не обслуживается',
+          '5': 'Абонент в сети не зарагистрирован',
+          '6': 'Абонент временно заблокирован',
+          '7': 'Короткие гудки',
+          '8': 'Вызов не может быть установлен',
+          '9': 'Абонент временно недоступен',
+          '10': 'Телефон принадлежит организации',
+          '11': 'Телефон несовершеннолетнего',
+          '12': 'Телефон существует, но занят',
+          '13': 'Телефон существует, но не берет трубку',
+          '14': 'Перезвонить позднее',
+          '15': 'Респондент отказался отвечать',
+          '16': 'Успех'
         }
       },
       {
@@ -128,7 +131,8 @@ const Table = ({ data }) => {
     <MaterialTable
       options={{
         exportButton: true,
-        showTitle: false
+        showTitle: false,
+        pageSizeOptions: [5, 20, 40, 200, 400, 800]
       }}
       icons={tableIcons}
       localization={localData}

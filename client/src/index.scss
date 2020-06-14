@@ -7,6 +7,17 @@
 
 @import "./containers/PhoneFilter/phonefilter.scss";
 
-@import "./components/PhoneSearch/phonesearch.scss";
+@import "./containers/PhoneSearch/phonesearch.scss";
+
+@import "./containers/PollSelect/pollselect.scss";
 
 @import "./containers/DriveIn/drivein.scss";
+
+@import "./components/PollForm/pollform.scss";
+
+.select-section {
+  padding: 30px 30px 0 30px;
+}
+.drive-btn {
+  padding: 0 30px 0 30px;
+}

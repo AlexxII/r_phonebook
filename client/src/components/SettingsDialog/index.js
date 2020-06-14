@@ -9,18 +9,18 @@ import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 
-import { DriveForm } from '../../components'
+import { PollForm } from '../../components'
 
-const SettingsDialog = ({ phone, closeHdl, saveHndl, open }) => {
+const SettingsDialog = ({ poll, inputHndl, closeHdl, saveHndl, open }) => {
 
   return (
     <Fragment>
       <Typography component={'span'} variant={'body2'}>
 
-        <Grid container spacing={0} className="phone-dialog-button">
+        <Grid container spacing={0} className="poll-dialog-button">
           <Grid item xs={12} sm={12}>
             <Dialog
-              className="phone-dialog"
+              className="poll-dialog"
               disableBackdropClick
               disableEscapeKeyDown
               open={open}
@@ -28,21 +28,16 @@ const SettingsDialog = ({ phone, closeHdl, saveHndl, open }) => {
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
-              <DialogTitle id="alert-dialog-title">{""}</DialogTitle>
+              <DialogTitle id="alert-dialog-title">Добавить опрос</DialogTitle>
               <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  <label>номер:</label>
-                  <div className="header">
-                    <h3>FFF</h3>
-                  </div>
-                </DialogContentText>
+                <PollForm callb={inputHndl}/>
               </DialogContent>
               <DialogActions>
                 <Button onClick={closeHdl} color="primary">
                   Отмена
                 </Button>
-                {phone && (
-                  <Button onClick={saveHndl} color="primary" autoFocus>
+                {poll.code && poll.title && (
+                  <Button onClick={saveHndl} color="primary">
                     Сохранить
                   </Button>
                 )
